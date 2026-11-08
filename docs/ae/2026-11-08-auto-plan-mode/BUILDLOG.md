@@ -19,3 +19,9 @@ Task 1: started (base 6ef0059)
 Task 1: complete (commits d3c8a01..5dada70, tests: `npm test && npm run typecheck` → pass, review: clean)
 
 Task 2: started (base 5dada70)
+Task 2: ruling: plan specified raw JSON Schema for the contract, but raw JSON Schema infers `unknown` so the contract could not type-check shared shapes (reviewer Critical) — switched to effect codecs wrapped in `toStandardSchemaV1` with identical id, method/event names, and payload shapes; `effect` becomes a direct dependency. Cost if wrong: none for consumers; type-safe contract is strictly stronger than the plan's mechanism.
+Task 2: fix round 1/5 (2 critical addressed — typed portable contract + handler-output inference; permanent compile-time guard added at test/rpc-handler-typecheck.ts; commit af88928)
+Task 2: fix round 2/5 (1 critical addressed — additionalProperties:false enforced in-contract via parseOptions.onExcessProperty; commit 6654e79)
+Task 2: complete (commits 5dada70..6654e79, tests: `npm test && npm run typecheck` → pass, review: clean)
+
+Task 3: started (base 6654e79)
