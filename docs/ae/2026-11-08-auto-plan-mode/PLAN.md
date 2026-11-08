@@ -1,6 +1,6 @@
 ---
 id: 2026-11-08-auto-plan-mode
-status: Building
+status: Done
 updated: 2026-11-08
 prd: docs/ae/2026-11-08-auto-plan-mode/PRD.md
 ---
