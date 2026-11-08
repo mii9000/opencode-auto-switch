@@ -6,19 +6,15 @@ No more forgetting to switch to Plan mode before asking a planning question — 
 
 ## Install
 
-Add the plugin to `opencode.json(c)` (project or global):
+OpenCode loads plugins from npm packages or local directories. This plugin is **GitHub-only for now** (not on npm), so clone it once and point your config at the checkout — in `opencode.json(c)` (project) or `~/.config/opencode/opencode.jsonc` (global):
 
-```jsonc
-{
-  "plugins": ["opencode-auto-switch"]
-}
+```sh
+git clone https://github.com/mii9000/opencode-auto-switch.git ~/tools/opencode-auto-switch
 ```
 
-While it is not yet published to npm, point at a local checkout or the GitHub repo instead:
-
 ```jsonc
 {
-  "plugins": ["./path/to/opencode-auto-switch"]
+  "plugins": ["/absolute/path/to/opencode-auto-switch"]
 }
 ```
 
@@ -50,6 +46,8 @@ npm test        # vitest
 npm run typecheck
 npm pack        # publishability check
 ```
+
+A live integration probe (`probe.mjs`) drives a real `opencode serve` end to end — switch, restore, stand-down, unwitnessed sessions — and exits non-zero on any failure. Start a server in a project with the plugin linked, then run it with the server password from its output: `OC_PASSWORD=<password> node --experimental-strip-types probe.mjs`.
 
 Manual smoke checklist (maintainer, ~2 minutes, against a real TUI with the plugin linked):
 

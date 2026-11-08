@@ -4,18 +4,33 @@
   "description": "OpenCode plugin: a prompt ending with ? runs in Plan mode; the next prompt restores the previous agent. TUI sessions only.",
   "type": "module",
   "license": "MIT",
+  "author": "mii9000",
   "keywords": [
     "opencode",
     "opencode-plugin",
     "plan-mode",
     "plugin"
-  ],  "exports": {
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mii9000/opencode-auto-switch.git"
+  },
+  "homepage": "https://github.com/mii9000/opencode-auto-switch#readme",
+  "bugs": {
+    "url": "https://github.com/mii9000/opencode-auto-switch/issues"
+  },
+  "exports": {
     ".": "./src/index.ts",
     "./rpc": "./src/rpc.ts",
     "./tui": "./src/tui.ts"
   },
   "files": [
-    "src",
+    "src/index.ts",
+    "src/prompt-check.ts",
+    "src/rpc.ts",
+    "src/state.ts",
+    "src/tui.ts",
+    "src/witness.ts",
     "README.md",
     "LICENSE"
   ],
