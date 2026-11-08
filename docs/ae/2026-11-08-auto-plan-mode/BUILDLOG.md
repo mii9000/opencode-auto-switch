@@ -25,3 +25,7 @@ Task 2: fix round 2/5 (1 critical addressed — additionalProperties:false enfor
 Task 2: complete (commits 5dada70..6654e79, tests: `npm test && npm run typecheck` → pass, review: clean)
 
 Task 3: started (base 6654e79)
+Task 3: minor (deferred): AC-5 test does not cover the subsequent fresh question from the `review` agent (a regression hardcoding rememberedAgent "build" would pass current switch tests)
+Task 3: complete (commits 6654e79..7bb9646, tests: `npm test && npm run typecheck` → pass, review: clean)
+
+Task 4: started (base 7bb9646)
