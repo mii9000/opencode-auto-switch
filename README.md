@@ -1,5 +1,61 @@
 # opencode-auto-switch
 
-An OpenCode plugin: a prompt ending with `?` runs in Plan mode; the next prompt that does not restores the previous agent. TUI sessions only.
+An [OpenCode](https://opencode.ai) plugin: **a prompt ending with `?` runs in Plan mode; the next prompt that doesn't restores the previous agent.** TUI sessions only.
 
-> README is completed in Task 6 of the build plan. See `docs/ae/2026-11-08-auto-plan-mode/` for the PRD and PLAN.
+No more forgetting to switch to Plan mode before asking a planning question — and no more forgetting to switch back afterwards.
+
+## Install
+
+Add the plugin to `opencode.json(c)` (project or global):
+
+```jsonc
+{
+  "plugins": ["opencode-auto-switch"]
+}
+```
+
+While it is not yet published to npm, point at a local checkout or the GitHub repo instead:
+
+```jsonc
+{
+  "plugins": ["./path/to/opencode-auto-switch"]
+}
+```
+
+Requires OpenCode **v2.2.x** (`@opencode/plugin` ^2.2.6). One entry loads both parts: the server part (does the switching) and the TUI part (witnesses your sessions and shows toasts).
+
+## Behavior
+
+| You type (TUI main session) | What happens |
+|---|---|
+| prompt ending with `?` (trailing whitespace ok) | session switches to the `plan` agent before the prompt runs; toast: `Plan mode — prompt ended with "?"` |
+| next prompt **not** ending with `?` | session switches back to the agent it had before; toast: `Restored <agent>` |
+| prompt ending with `?` while already in plan | nothing (no state, no toast) |
+| you manually changed the agent in between | the plugin stands down — it never overrides a manual choice |
+| prompt in `opencode run`, the SDK, or a subagent | never affected |
+
+Never-silent rule: every plugin-initiated switch shows a toast. Every switch is best-effort — if anything fails, your prompt still runs untouched.
+
+## How it works
+
+The TUI part of the plugin reports which sessions it witnesses to the server part over an RPC contract. The server part intercepts each admitted prompt (before it runs) and only ever acts on witnessed sessions — so `opencode run`, SDK sessions, and subagents are excluded by construction. The "restore" debt is stored on the session itself (`opencode-auto-plan` metadata), so it survives server restarts.
+
+## Development
+
+```sh
+npm install
+npm test        # vitest
+npm run typecheck
+npm pack        # publishability check
+```
+
+Manual smoke checklist (maintainer, ~2 minutes, against a real TUI with the plugin linked):
+
+1. In `build`, send `how does auth work?` → toast `Plan mode — prompt ended with "?"`, agent indicator shows `plan`.
+2. Send `summarize` → toast `Restored build`, indicator back to `build`.
+3. Switch to plan manually, send `why?` → no toast, no change.
+4. From another terminal: `opencode run "why does this fail?"` → no toast, TUI session unchanged.
+
+## License
+
+MIT — see [LICENSE](./LICENSE).

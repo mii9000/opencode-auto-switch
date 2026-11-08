@@ -33,3 +33,8 @@ Task 4: minor (deferred): no test for a rejected metadata update (the catch cove
 Task 4: complete (commits 7bb9646..fce3649, tests: `npm test && npm run typecheck` → pass, review: clean)
 
 Task 5: started (base fce3649)
+Task 5: minor (deferred): tests do not cover a witness change while an earlier push is still in flight (a regression suppressing that later push would go undetected)
+Task 5: complete (commits fce3649..128e261, tests: `npm test && npm run typecheck` → pass, review: clean)
+
+Task 6: started (base 128e261)
+Task 6: test-engineer skipped — pure docs/config/integration-validation task, no new logic (per plan: README, package metadata, npm pack, smoke)

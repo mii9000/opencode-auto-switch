@@ -9,8 +9,7 @@
     "opencode-plugin",
     "plan-mode",
     "plugin"
-  ],
-  "exports": {
+  ],  "exports": {
     ".": "./src/index.ts",
     "./rpc": "./src/rpc.ts",
     "./tui": "./src/tui.ts"
