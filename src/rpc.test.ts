@@ -47,8 +47,8 @@ describe("reportSessions input schema", () => {
     expect(await issuesOf(inputValidate, {})).toBe(true)
   })
 
-  it("tolerates payload keys beyond sessionIDs (effect decoder default)", async () => {
-    expect(await issuesOf(inputValidate, { sessionIDs: [], extra: 1 })).toBe(false)
+  it("rejects payload keys beyond sessionIDs", async () => {
+    expect(await issuesOf(inputValidate, { sessionIDs: [], extra: 1 })).toBe(true)
   })
 })
 
@@ -79,7 +79,7 @@ describe("switched event schema", () => {
     expect(await issuesOf(switchedValidate, { sessionID: 1, from: "build", to: "plan", reason: "question" })).toBe(true)
   })
 
-  it("tolerates payload keys beyond the four defined fields (effect decoder default)", async () => {
-    expect(await issuesOf(switchedValidate, { sessionID: "ses_1", from: "build", to: "plan", reason: "question", x: 1 })).toBe(false)
+  it("rejects payload keys beyond the four defined fields", async () => {
+    expect(await issuesOf(switchedValidate, { sessionID: "ses_1", from: "build", to: "plan", reason: "question", x: 1 })).toBe(true)
   })
 })
