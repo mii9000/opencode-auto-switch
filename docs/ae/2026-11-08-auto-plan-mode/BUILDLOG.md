@@ -16,3 +16,6 @@ Session 2026-11-08T00:57:39Z: started (base 6ef0059)
 Pre-flight: no conflicts — T1→T3 `isQuestionPrompt(text: string): boolean` matches; T2 `AutoPlanRpc` (reportSessions input `{sessionIDs: string[]}`, event `switched {sessionID, from, to, reason}`) matches T4 register/emit and T5 call/subscribe; T3 `decide/DecideInput/Action` matches T4; parallel file sets disjoint (T2{rpc.*}∥T3{state.*}; T4{index.*, test/fakes.ts}∥T5{witness.*, tui.*, vitest.config.ts}). Note: repo had no usable git history — initialized and committed base 6ef0059 (PRD+PLAN only) before Task 1.
 
 Task 1: started (base 6ef0059)
+Task 1: complete (commits d3c8a01..5dada70, tests: `npm test && npm run typecheck` → pass, review: clean)
+
+Task 2: started (base 5dada70)
