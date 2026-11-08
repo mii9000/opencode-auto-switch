@@ -6,11 +6,15 @@ No more forgetting to switch to Plan mode before asking a planning question — 
 
 ## Install
 
-OpenCode loads plugins from npm packages or local directories. This plugin is **GitHub-only for now** (not on npm), so clone it once and point your config at the checkout — in `opencode.json(c)` (project) or `~/.config/opencode/opencode.jsonc` (global):
+Add the plugin to `opencode.json(c)` (project) or `~/.config/opencode/opencode.jsonc` (global). OpenCode installs it from GitHub automatically (verified with v2.2.6):
 
-```sh
-git clone https://github.com/mii9000/opencode-auto-switch.git ~/tools/opencode-auto-switch
+```jsonc
+{
+  "plugins": ["github:mii9000/opencode-auto-switch"]
+}
 ```
+
+Prefer a pinned checkout instead? Clone and point at the path:
 
 ```jsonc
 {
@@ -18,7 +22,7 @@ git clone https://github.com/mii9000/opencode-auto-switch.git ~/tools/opencode-a
 }
 ```
 
-Requires OpenCode **v2.2.x** (`@opencode/plugin` ^2.2.6). One entry loads both parts: the server part (does the switching) and the TUI part (witnesses your sessions and shows toasts).
+Requires OpenCode **v2.2.x** (`@opencode/plugin` ^2.2.6). One entry loads both parts: the server part (does the switching) and the TUI part (witnesses your sessions and shows toasts). Not on npm yet — install from GitHub as above, or `npm install` a checkout if you want to consume it as a package.
 
 ## Behavior
 
