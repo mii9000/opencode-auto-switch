@@ -33,10 +33,26 @@ export default Plugin.define({
     for (const tab of context.ui.tabs.list()) witness.add(tab.sessionID)
     schedulePush()
 
+    let footerSessionID: string | undefined
+    function reconcileDisplayed(): void {
+      // A session this TUI stopped displaying (tab closed, navigated away)
+      // no longer earns toasts. Open tabs and the footer's session stay.
+      // A tabs-disabled TUI shows one session at a time; its witness stays
+      // grow-only.
+      if (!context.ui.tabs.enabled()) return
+      const keep = new Set(context.ui.tabs.list().map((tab) => tab.sessionID))
+      if (footerSessionID) keep.add(footerSessionID)
+      for (const id of witness.snapshot()) {
+        if (!keep.has(id)) witness.remove(id)
+      }
+    }
+
     const unclaim = context.ui.slot({
       append: "prompt.footer",
       render: (input) => {
+        footerSessionID = input.sessionID
         if (input.sessionID) witness.add(input.sessionID)
+        reconcileDisplayed()
         // The claim must render JSX but recording is all this slot does.
         return null as never
       },

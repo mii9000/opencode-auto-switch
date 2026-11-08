@@ -32,9 +32,9 @@ Requires OpenCode **v2.2.x** (`@opencode/plugin` ^2.2.6). One entry loads both p
 | next prompt **not** ending with `?` | session switches back to the agent it had before; toast: `Restored <agent>` |
 | prompt ending with `?` while already in plan | nothing (no state, no toast) |
 | you manually changed the agent in between | the plugin stands down — it never overrides a manual choice |
-| prompt in `opencode run`, the SDK, or a subagent | never affected |
+| prompt in `opencode run`, the SDK, or a subagent | never affected **unless that session has been open in a TUI** (see below) |
 
-Exclusion precision: the plugin acts on **sessions a TUI has open** (that is what "witnessed" means — the plugin API exposes no per-prompt origin). A programmatic prompt (`opencode run --session <id>`, SDK) sent to a session that is currently open in a TUI is therefore treated as interactive, like the rest of that session's traffic. Sessions no TUI has ever seen are never touched.
+Provenance boundary (important): the plugin acts on sessions that a TUI has witnessed — sessions the TUI currently displays, plus sessions it displayed earlier while the server ran (the plugin API exposes no per-prompt origin, so "typed in the TUI" is approximated by "belongs to a TUI"). A programmatic prompt (`opencode run --session <id>`, SDK) sent to such a session is therefore treated as interactive. Sessions **never** opened in a TUI are never touched — plain `opencode run` and SDK-driven work is unaffected.
 
 Never-silent rule: every plugin-initiated switch shows a toast. Every switch is best-effort — if anything fails, your prompt still runs untouched.
 

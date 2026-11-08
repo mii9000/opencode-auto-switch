@@ -81,7 +81,7 @@ export interface FakeTuiCtx {
     /** Every slot claim made so far, in claim order. */
     slots: FakeSlotRecord[]
     slot: Mock<(claim: FakeSlotClaim) => Mock<() => void>>
-    tabs: { list: Mock<() => Array<{ sessionID: string }>> }
+    tabs: { enabled: Mock<() => boolean>; list: Mock<() => Array<{ sessionID: string }>> }
     toast: { show: Mock<(options: FakeToastOptions) => void> }
   }
   data: FakeData
@@ -176,6 +176,7 @@ export function createFakeTuiCtx(): FakeTuiCtx {
         return unclaim
       }),
       tabs: {
+        enabled: vi.fn((): boolean => false),
         list: vi.fn((): Array<{ sessionID: string }> => []),
       },
       toast: {

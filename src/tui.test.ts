@@ -189,6 +189,32 @@ describe("switched toasts", () => {
     expect(fake.ui.toast.show).toHaveBeenCalledTimes(1)
   })
 
+  it("AC-7: a closed tab's session stops earning toasts", async () => {
+    const fake = createFakeTuiCtx()
+    fake.ui.tabs.enabled.mockReturnValue(true)
+    fake.ui.tabs.list.mockReturnValue([{ sessionID: "tab_1" }])
+    await setup(fake)
+
+    await vi.waitFor(() =>
+      expect(rpcBinding(fake).subscriberCount("switched")).toBeGreaterThan(0),
+    )
+    rpcBinding(fake).dispatch(
+      "switched",
+      switchedEvent({ sessionID: "tab_1", from: "build", to: "plan", reason: "question" }),
+    )
+    expect(fake.ui.toast.show).toHaveBeenCalledTimes(1)
+
+    // The tab closes and the TUI navigates away: the session no longer earns
+    // toasts from this TUI.
+    fake.ui.tabs.list.mockReturnValue([])
+    renderFooter(fake, undefined)
+    rpcBinding(fake).dispatch(
+      "switched",
+      switchedEvent({ sessionID: "tab_1", from: "plan", to: "build", reason: "restore" }),
+    )
+    expect(fake.ui.toast.show).toHaveBeenCalledTimes(1)
+  })
+
   it("AC-4: with no switched event delivered, no toast call occurs", async () => {
     const fake = createFakeTuiCtx()
     await setup(fake)

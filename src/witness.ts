@@ -3,6 +3,12 @@ export interface Witness {
   add(sessionID: string): boolean
   snapshot(): string[]
   has(sessionID: string): boolean
+  /**
+   * Forgets a session (its tab closed or the TUI stopped displaying it).
+   * Does not fire change callbacks: the server's switch set never shrinks,
+   * so only local toast filtering follows removals.
+   */
+  remove(sessionID: string): void
   /** Registers a change callback; returns an unsubscribe function. */
   onChange(cb: () => void): () => void
 }
@@ -20,6 +26,9 @@ export function createWitness(): Witness {
     },
     has(sessionID: string): boolean {
       return ids.has(sessionID)
+    },
+    remove(sessionID: string): void {
+      ids.delete(sessionID)
     },
     snapshot(): string[] {
       return [...ids]
