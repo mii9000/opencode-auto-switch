@@ -25,7 +25,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@opencode/plugin": "^2.2.6"
+    "@opencode/plugin": "^2.2.6",
+    "effect": "^4.1.0"
   },
   "devDependencies": {
     "typescript": "^5.9.0",
