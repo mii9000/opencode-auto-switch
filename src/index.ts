@@ -38,11 +38,13 @@ export default Plugin.define({
     async function executeAction(sessionID: string, info: Awaited<ReturnType<typeof ctx.session.get>>, action: Action): Promise<void> {
       switch (action.type) {
         case "switch-to-plan": {
-          await ctx.session.switchAgent({ sessionID, agent: PLAN_AGENT })
+          // Metadata first: if the write fails we skip the switch entirely
+          // instead of stranding the session in plan with no restore debt.
           await ctx.session.update({
             sessionID,
             metadata: { ...info.metadata, [STATE_KEY]: { agent: action.rememberedAgent } },
           })
+          await ctx.session.switchAgent({ sessionID, agent: PLAN_AGENT })
           await registration.events.emit("switched", {
             sessionID,
             from: action.rememberedAgent,
@@ -52,6 +54,9 @@ export default Plugin.define({
           return
         }
         case "restore": {
+          // Switch first: if the metadata strip fails afterwards, the next
+          // prompt's give-up rule cleans the stale state — and the session is
+          // already where the user wants it.
           await ctx.session.switchAgent({ sessionID, agent: action.agent })
           await ctx.session.update({ sessionID, metadata: withoutState(info.metadata) })
           await registration.events.emit("switched", {

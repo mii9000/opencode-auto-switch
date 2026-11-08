@@ -34,6 +34,8 @@ Requires OpenCode **v2.2.x** (`@opencode/plugin` ^2.2.6). One entry loads both p
 | you manually changed the agent in between | the plugin stands down — it never overrides a manual choice |
 | prompt in `opencode run`, the SDK, or a subagent | never affected |
 
+Exclusion precision: the plugin acts on **sessions a TUI has open** (that is what "witnessed" means — the plugin API exposes no per-prompt origin). A programmatic prompt (`opencode run --session <id>`, SDK) sent to a session that is currently open in a TUI is therefore treated as interactive, like the rest of that session's traffic. Sessions no TUI has ever seen are never touched.
+
 Never-silent rule: every plugin-initiated switch shows a toast. Every switch is best-effort — if anything fails, your prompt still runs untouched.
 
 ## How it works

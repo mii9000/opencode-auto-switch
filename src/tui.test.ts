@@ -128,6 +128,7 @@ describe("switched toasts", () => {
   it("AC-4: a switched event with reason 'question' toasts the plan-mode message exactly once", async () => {
     const fake = createFakeTuiCtx()
     await setup(fake)
+    renderFooter(fake, "ses_1")
 
     await vi.waitFor(() =>
       expect(rpcBinding(fake).subscriberCount("switched")).toBeGreaterThan(0),
@@ -148,6 +149,7 @@ describe("switched toasts", () => {
   it("AC-4: a switched event with reason 'restore' toasts 'Restored <to>' exactly once", async () => {
     const fake = createFakeTuiCtx()
     await setup(fake)
+    renderFooter(fake, "ses_1")
 
     await vi.waitFor(() =>
       expect(rpcBinding(fake).subscriberCount("switched")).toBeGreaterThan(0),
@@ -163,6 +165,28 @@ describe("switched toasts", () => {
       message: "Restored build",
       variant: "info",
     })
+  })
+
+  it("AC-7: a switched event for a session this TUI does not witness does not toast", async () => {
+    const fake = createFakeTuiCtx()
+    await setup(fake)
+    renderFooter(fake, "ses_1")
+
+    await vi.waitFor(() =>
+      expect(rpcBinding(fake).subscriberCount("switched")).toBeGreaterThan(0),
+    )
+    rpcBinding(fake).dispatch(
+      "switched",
+      switchedEvent({ sessionID: "ses_other", from: "build", to: "plan", reason: "question" }),
+    )
+    expect(fake.ui.toast.show).not.toHaveBeenCalled()
+
+    // The filter is per-session, not a blanket mute.
+    rpcBinding(fake).dispatch(
+      "switched",
+      switchedEvent({ sessionID: "ses_1", from: "build", to: "plan", reason: "question" }),
+    )
+    expect(fake.ui.toast.show).toHaveBeenCalledTimes(1)
   })
 
   it("AC-4: with no switched event delivered, no toast call occurs", async () => {

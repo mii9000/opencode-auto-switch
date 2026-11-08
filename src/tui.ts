@@ -43,6 +43,9 @@ export default Plugin.define({
     })
 
     const offSwitched = autoPlan.events.on("switched", (event) => {
+      // Only the TUI that witnesses the switched session reports it — other
+      // TUI instances must stay quiet about switches they do not display.
+      if (!witness.has(event.data.sessionID)) return
       context.ui.toast.show({
         title: TOAST_TITLE,
         message:

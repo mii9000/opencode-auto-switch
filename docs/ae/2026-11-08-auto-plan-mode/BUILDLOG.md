@@ -38,3 +38,13 @@ Task 5: complete (commits fce3649..128e261, tests: `npm test && npm run typechec
 
 Task 6: started (base 128e261)
 Task 6: test-engineer skipped — pure docs/config/integration-validation task, no new logic (per plan: README, package metadata, npm pack, smoke)
+Task 6: minor (deferred): package.json `repository` field left unset — the GitHub repo URL does not exist yet; set it when the repo is published
+Task 6: complete (commits 128e261..00a4fe6, tests: `npm test && npm run typecheck && npm pack` → pass (63 tests, tsc exit 0, tarball with src/ README LICENSE), review: pending final review)
+
+Journey AC-1: verified — unit (state.test, index.test AC-1) + LIVE probe against real opencode v2.2.6 serve: witnessed session prompt "…why do cats purr?" → session.agent flipped to plan, metadata `opencode-auto-plan` = {agent:"build"} (probe.mjs, 10/10 checks)
+Journey AC-2: verified — unit + LIVE probe: next non-? prompt → agent restored to build, state key removed (probe.mjs)
+Journey AC-3: verified — unit only (state machine parentID guard + wiring test "witnessed child session → get called, zero actions"); live subagent spawn not exercised (requires model-driven task tool run); the parentID guard is on the hot path for every witnessed prompt
+Journey AC-4: verified — unit + LIVE probe: session created in plan, ? prompt → stays plan, no state debt (probe.mjs)
+Journey AC-5: verified — unit + LIVE probe: auto-switched to plan, manual switchAgent back to build, fresh ? prompt → stays build (no re-switch), state debt cleared (probe.mjs)
+Journey AC-6: verified — unit + LIVE: real `opencode run "why does the sky look blue?"` completed in `build` (run output header), and probe session B (unwitnessed via RPC) with ? prompt → agent never plan, no state debt
+Journey AC-7: verified — unit (index.test emits switched only on plugin-initiated switches; tui.test asserts ui.toast.show exact copy on switched, no toast without event); the real-TUI visual toast is the README manual smoke (steps 1–3), not automatable headlessly

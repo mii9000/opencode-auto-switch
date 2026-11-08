@@ -206,7 +206,7 @@ describe("auto-plan server plugin", () => {
       expect(warnSpy).toHaveBeenCalled()
     })
 
-    it("resolves when switchAgent rejects, warns, and stops before further side effects", async () => {
+    it("resolves when switchAgent rejects, warns, and the stale state self-heals", async () => {
       const warnSpy = spyWarn()
       const fake = await witnessedBuildSession()
       fake.session.switchAgent.mockRejectedValueOnce(new Error("switch failed"))
@@ -214,10 +214,24 @@ describe("auto-plan server plugin", () => {
       const event = newPromptEvent({ sessionID: "ses_1", text: "why?" })
       await expect(promptHandler(fake)(event)).resolves.toBeUndefined()
 
-      expect(fake.session.update).not.toHaveBeenCalled()
+      // Metadata is written before the switch (so a failed write prevents
+      // the switch, never the reverse) — a failed switch leaves stale debt
+      // that the next prompt's give-up rule cleans.
+      expect(fake.session.update).toHaveBeenCalledTimes(1)
       expect(fake.rpc.registration.events.emit).not.toHaveBeenCalled()
       expect(event.prompt.text).toBe("why?")
       expect(warnSpy).toHaveBeenCalled()
+
+      // Self-heal: the next non-question prompt clears the stale debt and
+      // never switches (the session never left build).
+      fake.session.switchAgent.mockClear()
+      fake.session.update.mockClear()
+      const followUp = newPromptEvent({ sessionID: "ses_1", text: "summarize" })
+      await expect(promptHandler(fake)(followUp)).resolves.toBeUndefined()
+      expect(fake.session.switchAgent).not.toHaveBeenCalled()
+      expect(fake.rpc.registration.events.emit).not.toHaveBeenCalled()
+      const stripped = fake.session.update.mock.calls[0]?.[0]?.metadata
+      expect(stripped && "opencode-auto-plan" in stripped).toBe(false)
     })
 
     it("resolves when the switched emit rejects, and warns", async () => {
@@ -228,6 +242,22 @@ describe("auto-plan server plugin", () => {
       const event = newPromptEvent({ sessionID: "ses_1", text: "why?" })
       await expect(promptHandler(fake)(event)).resolves.toBeUndefined()
 
+      expect(event.prompt.text).toBe("why?")
+      expect(warnSpy).toHaveBeenCalled()
+    })
+
+    it("skips the switch when the metadata write fails, and warns", async () => {
+      const warnSpy = spyWarn()
+      const fake = await witnessedBuildSession()
+      fake.session.update.mockRejectedValueOnce(new Error("disk full"))
+
+      const event = newPromptEvent({ sessionID: "ses_1", text: "why?" })
+      await expect(promptHandler(fake)(event)).resolves.toBeUndefined()
+
+      // No restore debt, no switch, no toast — better stranded unswitched
+      // than stranded in plan.
+      expect(fake.session.switchAgent).not.toHaveBeenCalled()
+      expect(fake.rpc.registration.events.emit).not.toHaveBeenCalled()
       expect(event.prompt.text).toBe("why?")
       expect(warnSpy).toHaveBeenCalled()
     })
